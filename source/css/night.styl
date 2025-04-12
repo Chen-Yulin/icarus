@@ -1,10 +1,28 @@
-dark-primary-color = rgb(55, 61, 72)
-dark-primary-color-hover = rgb(67, 74, 86)
+//dark-primary-color = rgb(55, 61, 72)
+dark-primary-color-hover = rgb(120, 60, 82)
+//dark-primary-color-hover = rgb(140, 82, 70)
+dark-primary-color = rgb(80, 72, 110)
 dark-primary-color-active = rgb(44, 49, 58)
 dark-font-color = #c0c0c0
 
+#universe, #flower
+    position: fixed
+    margin: 0
+    padding: 0
+    border: 0
+    outline: 0
+    left: 0
+    top: 0
+    width: 100%
+    height: 100%
+    pointer-events: none
+    z-index: 0
+
 #universe
     display: none
+
+#flower
+    display: block
 
 .navbar-logo,
 .footer-logo
@@ -21,8 +39,6 @@ night()
         color: rgb(203,186,125)
 
     // night icon changed to fas fa-lightbulb
-    #night-nav #night-icon:before
-        content: '\f0eb'
 
     // global background
     #universe
@@ -37,6 +53,11 @@ night()
         left: 0
         top: 0
         width: 100%
+        height: 100%
+        pointer-events: none
+
+    #flower
+        display: none
         height: 100%
         pointer-events: none
 
