@@ -17,6 +17,15 @@ module.exports = class extends Component {
         return <html lang={language ? language.substr(0, 2) : ''}>
             <Head site={site} config={config} helper={helper} page={page} />
             <body class={`is-${columnCount}-column`}>
+                {/* Liquid glass SVG filter for buttons & tags */}
+                <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
+                    <defs>
+                        <filter id="liquid-glass-sm" x="-10%" y="-10%" width="120%" height="120%">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" result="noise" seed="5" />
+                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G" />
+                        </filter>
+                    </defs>
+                </svg>
                 <script type="text/javascript" src="/js/imaegoo/night.js"></script>
                 <canvas id="universe"></canvas>
                 <canvas id="flower"></canvas>
