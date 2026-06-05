@@ -7,6 +7,41 @@ const Comment = require('./comment');
 const ArticleLicensing = require('hexo-component-inferno/lib/view/misc/article_licensing');
 
 /**
+ * Generate preview content for index page.
+ * Posts with images: show first image + first paragraph
+ * Posts without images: show first few block elements (up to ~maxLines worth)
+ */
+function generatePreview(content, maxBlocks = 5) {
+    if (!content) return '';
+
+    // Check for images
+    const imgMatch = content.match(/<img[^>]+>/i);
+    if (imgMatch) {
+        // Has image: show first image + first paragraph
+        const firstImg = imgMatch[0];
+        const pMatch = content.match(/<p[^>]*>[\s\S]*?<\/p>/i);
+        const firstPara = pMatch ? pMatch[0] : '';
+        return firstImg + firstPara;
+    }
+
+    // No image: extract first few block-level elements to preserve formatting
+    const blockPattern = /<(p|h[1-6]|ul|ol|pre|blockquote|div|table)[^>]*>[\s\S]*?<\/\1>/gi;
+    const blocks = [];
+    let match;
+    while ((match = blockPattern.exec(content)) !== null && blocks.length < maxBlocks) {
+        blocks.push(match[0]);
+    }
+
+    if (blocks.length > 0) {
+        return blocks.join('') + (blocks.length >= maxBlocks ? '<p>...</p>' : '');
+    }
+
+    // Fallback: return truncated content if no block elements found
+    const truncated = content.substring(0, 2000);
+    return truncated + (content.length > 2000 ? '...' : '');
+}
+
+/**
  * Get the word count of text.
  */
 function getWordCount(content) {
@@ -89,12 +124,12 @@ module.exports = class extends Component {
                     {page.title !== '' && index ? <p class="title is-3 is-size-4-mobile"><a class="link-muted" href={url_for(page.link || page.path)}>{page.title}</a></p> : null}
                     {page.title !== '' && !index ? <h1 class="title is-3 is-size-4-mobile">{page.title}</h1> : null}
                     {/* Content/Excerpt */}
-                    <div class="content" dangerouslySetInnerHTML={{ __html: index && page.excerpt ? page.excerpt : page.content }}></div>
+                    <div class="content" dangerouslySetInnerHTML={{ __html: index ? generatePreview(page.content) : page.content }}></div>
                     {/* Licensing block */}
                     {!index && article && article.licenses && Object.keys(article.licenses)
                         ? <ArticleLicensing.Cacheable page={page} config={config} helper={helper} /> : null}
                     {/* Tags */}
-                    {!index && page.tags && page.tags.length ? <div class="article-tags is-size-7 mb-4">
+                    {page.tags && page.tags.length ? <div class="article-tags is-size-7 mb-4">
                         <span class="mr-2">#</span>
                         {page.tags.map(tag => {
                             return <a class="link-muted mr-2" rel="tag" href={url_for(tag.path)}>{tag.name}</a>;
